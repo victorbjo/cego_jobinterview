@@ -48,7 +48,7 @@ Considerations:
 	Should be able to delete current table users if it already exists.</br>
 	More tests should be made. At the moment only writing error test is made.</br>
 - Security concerns:</br>
-	No protection at the moment against SQLI attacks, making it possible to delete the entire database without saving the data first</br>
+	No protection at the moment against SQLI attacks, making it very vulnerable</br>
 
 
 

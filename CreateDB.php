@@ -1,10 +1,11 @@
 <?php
-function loadDb($file){
-    $conn = mysqli_connect("localhost", "root","") or die(mysql_error());
 
+function loadDb($file){
+    //Creates DB if not already existing
+    $conn = mysqli_connect("localhost", "root","") or die(mysql_error());
     $sql = "CREATE DATABASE IF NOT EXISTS sqlDump";
     if ($conn->query($sql) === TRUE) {
-    echo"Connection succesful\n";
+        echo"Connection succesful\n";
     }
     else{
         echo"Connection failed\n";
@@ -12,25 +13,37 @@ function loadDb($file){
     $sql ="USE sqlDump";
     if ($conn->query($sql) === TRUE) {
         echo"Connected to DB\n";
-        }
-        else{
-            echo"Failed at connecting to DB\n";
-        }
-        $sql = file_get_contents($file);
-        
-        if ($conn->multi_query($sql) === TRUE) {
-            echo 'Dump "'.$file.'" was succesfully imported\n';
-        } else {
-            echo "Error creating table: " . $conn->error;
-            if (strpos($conn->error, "already exists") == false){
-                exit();
-            }
     }
+    else{
+        echo"Failed at connecting to DB\n";
+    }
+    //Runs queries from sqldump in new DB
+    $sql = file_get_contents($file);
+    if ($conn -> multi_query($sql)) {
+        echo "\nLoading SQL DUMP\n";
+        do {
+          // if there are more result-sets, the print a divider for ui purposes.
+          if ($conn -> more_results()) {
+            printf("-------------\n");
+          }
+           //Prepare next result set
+        } while ($conn -> next_result());
+        echo "Finished loading SQL dump\n";
+        $conn->close();
+      }
+      else{
+        $conn->close();
+        echo "Error loading SQL dump: " . $conn->error."\n";
+        if (strpos($conn->error, "already exists") == false){
+            exit();
+        }
+      }
 }
 
 function deleteQuery($sql,$connection){
     $sql = explode(" ",$sql);
     $placement = array_search("FROM", $sql);
+    //Saves everything after and including FROM keyword in user query
     if ($placement){
         for ($i = 0; $i < $placement; $i++){
             array_shift($sql);
@@ -40,8 +53,15 @@ function deleteQuery($sql,$connection){
         echo "Query invalid";
         exit();
     }
+    //Custom query made for deleting every affected row
     $sql = "DELETE " . implode(" ",$sql);
-    $result = $connection->query($sql);
+    if ($connection->query($sql)){
+        echo "Data deleted successfully \n";
+    }
+    else{
+        echo "Data not deleted succesfully";
+        exit();
+    }
 }
 
 function verifyData($file, $query, $connection){
@@ -49,9 +69,9 @@ function verifyData($file, $query, $connection){
     $result = $connection->query($query);
     $firstRun = TRUE;
     $start ="";
-    if ($result->num_rows > 0) {
+    if ($result->num_rows > 0) { // The user defined query is run again
         while($row = $result->fetch_assoc()) {
-            if ($firstRun){
+            if ($firstRun){ // Saves the array keys. This is needed for easy removal of them in the saved file
                 for ($i = 0; $i < count($row); $i++){
                     $start .= array_keys($row)[$i];
                 }
@@ -62,24 +82,29 @@ function verifyData($file, $query, $connection){
             }
         }
     }
+    // Removing all CSV seperators and the arraykeys
     $file = file_get_contents($file);
-    $file = str_replace(", ", "", $file);
+    $file = str_replace(", ", "", $file); 
     $file = str_replace("\n", "", $file);
     $file = str_replace($start, "", $file);
+    // New query checksum compared to checksum of raw data from file
     if (MD5($file) == MD5(implode("", $newData))){
+        echo "Data verified \n";
         return TRUE;
+    }
+    else{
+        echo "Data integrety not maintained. Please try again\n";
+        exit();
     }
 }
 
-
-$file = "sqldump.sql";
-loadDb($file);
-$conn = mysqli_connect("localhost", "root","","sqlDump") or die(mysql_error());
-$sql ="SELECT firstname, lastname, id FROM users";
-$sql ="SELECT email, firstname FROM users";
-$final = "";
-$firstRun = TRUE;
-$result = $conn->query($sql); 
+function saveData($connection){
+    //$conn = mysqli_connect("localhost", "root","","sqlDump") or die(mysql_error());
+    $sql ="SELECT firstname, lastname, id FROM users";
+    $sql ="SELECT email, firstname FROM users";
+    $final = "";
+    $firstRun = TRUE;
+    $result = $connection->query($sql); 
     if ($result->num_rows > 0) {
         // output data of each row
         while($row = $result->fetch_assoc()) {
@@ -106,11 +131,22 @@ $result = $conn->query($sql);
     $file = fopen("sqlQuery.csv", "w");
     fwrite($file,$final);
     fclose($file);
-    if (verifyData("sqlQuery.csv", $sql, $conn)){
-        deleteQuery($sql, $conn);
-    }
-    else{
-        echo "\nData not saved correctly, please try again";
-    }
-    //echo $final;
+    echo "Data saved\n";
+}
+
+if ($argc != 2){
+    echo "Program requires excactly 1 argument";
+}
+//echo $argv[1];
+$file = "sqldump.sql";
+loadDb($file);
+$conn = mysqli_connect("localhost", "root","","sqlDump") or die(mysql_error());
+$sql ="SELECT email, firstname FROM users";
+saveData($conn);
+if (verifyData("sqlQuery.csv", $sql, $conn)){
+    deleteQuery($sql, $conn);
+}
+else{
+    echo "\nData not saved correctly, please try again";
+}
 ?>

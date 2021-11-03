@@ -42,7 +42,7 @@ Considerations:
 	If a table "users" already exists it will not be able to create a new one. Neither will it update the current "users" table. </br>
 		However it will continue running even it if fails at this step
 	
-- Next steps:?</br>
+- Next steps:</br>
 	Set up protection against SQLI attacks.</br>
 	Should be able to try again if it encounters an error in any of the steps, at the moment it just exits every time.</br>
 	Should be able to delete current table users if it already exists.</br>

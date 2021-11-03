@@ -1,5 +1,5 @@
 # cego_jobinterview
-Repo of my solution to the assignment put forward by cego for recruitment.
+Repo of my solution to the assignment put forward by CEGO for recruitment.
 https://github.com/cego/interview-assignment
 Entire solution is developed in PHP using MySQL
 

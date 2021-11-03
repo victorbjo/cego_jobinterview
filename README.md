@@ -47,6 +47,7 @@ Considerations:
 	Should be able to try again if it encounters an error in any of the steps, at the moment it just exits every time.</br>
 	Should be able to delete current table users if it already exists.</br>
 	More tests should be made. At the moment only writing error test is made.</br>
+	Keep a log of all failed attempts, especially if the fail originates from a failed data verification
 - Security concerns:</br>
 	No protection at the moment against SQLI attacks, making it very vulnerable</br>
 

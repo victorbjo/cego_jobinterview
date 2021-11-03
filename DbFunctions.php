@@ -1,5 +1,4 @@
 <?php
-
 function loadDb($file){
     //Creates DB if not already existing
     $conn = mysqli_connect("localhost", "root","") or die(mysql_error());
@@ -105,7 +104,6 @@ function verifyData($file, $query, $connection){
 function saveData($connection, $sql){
     $final = "";
     $firstRun = TRUE;
-    echo $sql."\n";
     $result = $connection->query($sql); 
     if ($result->num_rows > 0) {
         // output data of each row
@@ -121,11 +119,14 @@ function saveData($connection, $sql){
             }
             $firstRun = FALSE;
             for ($i = 0; $i < count($row); $i++){
+                //Adding the new data entry to $final var, to be saved later
                 $final .= $row[array_keys($row)[$i]];
+                //Comma seperating the data entries, but not on the last entry of a given row
                 if ($i+1 < count($row)){
                     $final .= ", ";
                 }
             }
+            //Adds linebreak after last entry on any given row
             $final .= "\n";   
         }
     }
@@ -134,18 +135,4 @@ function saveData($connection, $sql){
     fclose($file);
     echo "Data saved\n";
 }
-
-if ($argc != 2){
-    echo "Program requires excactly 1 argument";
-    exit();
-}
-$file = "sqldump.sql";
-loadDb($file);
-$conn = mysqli_connect("localhost", "root","","sqlDump") or die(mysql_error());
-$sql = $argv[1];
-saveData($conn, $sql);
-if (verifyData("sqlQuery.csv", $sql, $conn)){
-    deleteQuery($sql, $conn);
-}
-$conn->close();
 ?>

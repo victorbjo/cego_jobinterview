@@ -32,9 +32,10 @@ function loadDb($file){
         $conn->close();
       }
       else{
+        $error = $conn->error;
         $conn->close();
-        echo "Error loading SQL dump: " . $conn->error."\n";
-        if (strpos($conn->error, "already exists") == false){
+        echo "Error loading SQL dump: " . $error."\n";
+        if (strpos($error, "already exists") == false){
             exit();
         }
       }
@@ -51,6 +52,7 @@ function deleteQuery($sql,$connection){
     }
     else{
         echo "Query invalid";
+        $connection->close();
         exit();
     }
     //Custom query made for deleting every affected row
@@ -60,6 +62,7 @@ function deleteQuery($sql,$connection){
     }
     else{
         echo "Data not deleted succesfully";
+        $connection->close();
         exit();
     }
 }
@@ -94,21 +97,20 @@ function verifyData($file, $query, $connection){
     }
     else{
         echo "Data integrety not maintained. Please try again\n";
+        $connection->close();
         exit();
     }
 }
 
-function saveData($connection){
-    //$conn = mysqli_connect("localhost", "root","","sqlDump") or die(mysql_error());
-    $sql ="SELECT firstname, lastname, id FROM users";
-    $sql ="SELECT email, firstname FROM users";
+function saveData($connection, $sql){
     $final = "";
     $firstRun = TRUE;
+    echo $sql."\n";
     $result = $connection->query($sql); 
     if ($result->num_rows > 0) {
         // output data of each row
         while($row = $result->fetch_assoc()) {
-            if ($firstRun){
+            if ($firstRun){// Saves the array keys. The array keys are put in start of the CSV file as "titles".
                 for ($i = 0; $i < count($row); $i++){
                     $final .= array_keys($row)[$i];
                     if ($i+1 < count($row)){
@@ -116,7 +118,6 @@ function saveData($connection){
                     }
                 }
                 $final .="\n";
-                $start = $final;
             }
             $firstRun = FALSE;
             for ($i = 0; $i < count($row); $i++){
@@ -136,17 +137,15 @@ function saveData($connection){
 
 if ($argc != 2){
     echo "Program requires excactly 1 argument";
+    exit();
 }
-//echo $argv[1];
 $file = "sqldump.sql";
 loadDb($file);
 $conn = mysqli_connect("localhost", "root","","sqlDump") or die(mysql_error());
-$sql ="SELECT email, firstname FROM users";
-saveData($conn);
+$sql = $argv[1];
+saveData($conn, $sql);
 if (verifyData("sqlQuery.csv", $sql, $conn)){
     deleteQuery($sql, $conn);
 }
-else{
-    echo "\nData not saved correctly, please try again";
-}
+$conn->close();
 ?>

@@ -10,10 +10,13 @@ Requirements:
 - Mysqli enabled (This can be checked in php.ini in your php folder)
 - A MySQL server up and running (Tested with XAMPP)
 - Make sure your php.exe is in your PATH
+- Either make sure the credential to the MySQL server is host="localhost", user="root" password="".
+	If this is not the case, please change the credentials in DbFunctions.php at line 4, and in retrieveData.php at line 11
 
 How to run program:
-- php retrieveData "SQL Query"
+- php retrieveData "Custom SQL Query"
 Example: opath\cego_jobinterview> php retrieveData.php "SELECT firstname, lastname FROM users WHERE email LIKE '%org%'"
+
 
 OBS - Since all path variables in the program is variable, you will have to be in the cego_jobinterview folder when running the command
 OBS - Make sure to put '"' around SQL query, and "'" around conditions such as %org%
@@ -33,7 +36,7 @@ Test:
 	The writing error test will run the program as usual, but before validating the file it will add a single "." to the end of the files data.
 	The program should then fail the validation step and then not delete the data
 
-My considerations:
+Considerations:
 - Known errors:
 	If "sqlQuery.csv" is already open, it will not be able to save the data and delete the retrieved data.
 	If a table "users" already exists it will not be able to create a new one. Neither will it update the current "users" table. 

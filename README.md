@@ -19,7 +19,7 @@ Example: opath\cego_jobinterview> php retrieveData.php "SELECT firstname, lastna
 
 
 OBS - Since all path variables in the program is variable, you will have to be in the cego_jobinterview folder when running the command</br>
-OBS - Make sure to put '"' around SQL query, and "'" around conditions such as %org%</br>
+OBS - Make sure to put double quotation marks(") around entire SQL query, and single quotation marks(') around conditions such as %org%</br>
 
 
 The output of the program:</br>

@@ -38,7 +38,7 @@ Test:
 
 Considerations:
 - Known errors:</br>
-	If "sqlQuery.csv" is already open, it will not be able to save the data and delete the retrieved data.</br>
+	If "sqlQuery.csv" is already open, it will not be able to save the data, but it will not delete any data.</br>
 	If a table "users" already exists it will not be able to create a new one. Neither will it update the current "users" table. </br>
 		However it will continue running even it if fails at this step
 	

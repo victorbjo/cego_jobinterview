@@ -6,7 +6,7 @@ writeError();
 function writeError(){
 $file = "sqldump.sql";
 loadDb($file);
-$conn = mysqli_connect("localhost", "root","","sqlDump") or die(mysql_error());
+$conn = mysqli_connect($host, $user, $password,"sqlDump") or die(mysql_error());
 $sql = "SELECT firstname, lastname FROM users";
 saveData($conn, $sql);
 $file = fopen("sqlQuery.csv", "w");

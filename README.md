@@ -11,7 +11,7 @@ Requirements:</br>
 - A MySQL server up and running (Tested with XAMPP)</br>
 - Make sure your php.exe is in your PATH</br>
 - Either make sure the credential to the MySQL server is host="localhost", user="root" password="".</br>
-	If this is not the case, please change the credentials in DbFunctions.php at line 4, and in retrieveData.php at line 11</br>
+	If this is not the case, please change the credentials in DbFunctions.php at line 2, 3 and 4</br>
 
 How to run program:</br>
 - php retrieveData "Custom SQL Query"</br>
@@ -41,6 +41,7 @@ Considerations:
 	If "sqlQuery.csv" is already open, it will not be able to save the data and delete the retrieved data.</br>
 	If a table "users" already exists it will not be able to create a new one. Neither will it update the current "users" table. </br>
 		However it will continue running even it if fails at this step
+	It will not be able to delete the data if an "ORDER BY" is included in the query
 	
 - Next steps:</br>
 	Set up protection against SQLI attacks.</br>

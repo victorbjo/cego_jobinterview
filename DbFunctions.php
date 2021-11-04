@@ -1,7 +1,7 @@
 <?php
-$password = "";
-$user = "root";
-$host = "localhost";
+$password = ""; // Please change here if your credentials are different
+$user = "root"; // Please change here if your credentials are different
+$host = "localhost"; // Please change here if your credentials are different
 function loadDb($file, $host, $user, $password){
     //Creates DB if not already existing
     $conn = mysqli_connect($host, $user, $password) or die(mysql_error());

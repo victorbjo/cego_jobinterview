@@ -38,7 +38,7 @@ Test:
 
 Considerations:
 - Known errors:</br>
-	If "sqlQuery.csv" is already open, it will not be able to save the data and delete the retrieved data.</br>
+	If "sqlQuery.csv" is already open, it will not be able to save the data, but it will not delete any data.</br>
 	If a table "users" already exists it will not be able to create a new one. Neither will it update the current "users" table. </br>
 		However it will continue running even it if fails at this step
 	It will not be able to delete the data if an "ORDER BY" is included in the query
@@ -48,8 +48,9 @@ Considerations:
 	Should be able to try again if it encounters an error in any of the steps, at the moment it just exits every time.</br>
 	Should be able to delete current table users if it already exists.</br>
 	More tests should be made. At the moment only writing error test is made.</br>
+	Keep a log of all failed attempts, especially if the fail originates from a failed data verification
 - Security concerns:</br>
-	No protection at the moment against SQLI attacks, making it possible to delete the entire database without saving the data first</br>
+	No protection at the moment against SQLI attacks, making it very vulnerable</br>
 
 
 
